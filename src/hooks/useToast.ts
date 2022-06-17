@@ -14,27 +14,21 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 
 	const trigger = useCallback((type: ToastType) => {
 		setToasts((state) => [...state, type]);
-	}, []);
 
-	useEffect(() => {
-    console.log('effect');
-    
-		timeoutRef.current = setTimeout(() => {
-      
+    timeoutRef.current = setTimeout(() => {
       setToasts((state) => {
         const [, ...rest] = state;
 
         return rest;
       })
 		}, 2000);
+	}, []);
 
+	useEffect(() => {
     return () => {
       clearTimeout(timeoutRef.current);
     }
-	}, [toasts]);
-
-  console.log({ toasts });
-  
+	}, []);
 
 	return {
 		toasts,
