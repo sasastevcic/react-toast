@@ -1,13 +1,17 @@
-import './App.css';
-import { useToastStore } from './hooks/useToast';
+import "./App.css";
+import { Toast, useToastStore } from "./hooks/useToast";
 
 function App() {
-  const { trigger } = useToastStore();
+  const { dispatch } = useToastStore();
 
   return (
     <div className="App">
-      <button type="button" onClick={() => trigger('Success')}>Success</button>
-      <button type="button" onClick={() => trigger('Error')}>Error</button>
+      <button type="button" onClick={() => dispatch(Toast.Success)}>
+        Success
+      </button>
+      <button type="button" onClick={() => dispatch(Toast.Error)}>
+        Error
+      </button>
     </div>
   );
 }

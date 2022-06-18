@@ -1,37 +1,59 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { createStore } from '../utils/createStore';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createStore } from "../utils/createStore";
+import { v4 as uuidv4 } from "uuid";
 
-export type ToastType = 'Success' | 'Error';
+export enum Toast {
+  Success = "Success",
+  Error = "Error",
+}
+export interface IToast {
+  type: Toast;
+  id: ReturnType<typeof uuidv4>;
+}
 
 type ToastStore = {
-	toasts: Array<ToastType>;
-	trigger: (type: ToastType) => void;
+  toasts: Array<IToast>;
+  dispatch: (type: Toast) => void;
+  remove: (id: string) => void;
 };
 
-export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('ToastStore', () => {
-	const [toasts, setToasts] = useState<Array<ToastType>>([]);
-	const timeoutRef = useRef<NodeJS.Timeout>();
+export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>(
+  "ToastStore",
+  () => {
+    const [toasts, setToasts] = useState<Array<IToast>>([]);
+    const timeoutRef = useRef<NodeJS.Timeout>();
 
-	const trigger = useCallback((type: ToastType) => {
-		setToasts((state) => [...state, type]);
+    const dispatch = useCallback((type: Toast) => {
+      const generateToast: IToast = {
+        id: uuidv4(),
+        type,
+      };
 
-    timeoutRef.current = setTimeout(() => {
-      setToasts((state) => {
-        const [, ...rest] = state;
+      setToasts((state) => [...state, generateToast]);
 
-        return rest;
-      })
-		}, 2000);
-	}, []);
+      timeoutRef.current = setTimeout(() => {
+        setToasts((state) => {
+          const [, ...rest] = state;
 
-	useEffect(() => {
-    return () => {
-      clearTimeout(timeoutRef.current);
-    }
-	}, []);
+          return rest;
+        });
+      }, 10000);
+    }, []);
 
-	return {
-		toasts,
-		trigger,
-	};
-});
+    const remove = useCallback((id: string) => {
+      setToasts((state) => state.filter(({ id: _id }) => _id !== id));
+    }, []);
+
+    useEffect(() => {
+      return () => {
+        clearTimeout(timeoutRef.current);
+      };
+    }, []);
+
+    return {
+      toasts,
+      dispatch,
+      remove,
+    };
+  }
+);
