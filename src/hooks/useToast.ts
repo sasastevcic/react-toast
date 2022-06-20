@@ -2,10 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createStore } from "../utils/createStore";
 
 function* idSequence() {
-  let i = 0;
+  let index = 1;
 
   while (true) {
-    yield i++;
+    yield index++;
   }
 }
 
