@@ -1,18 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createStore } from "../utils/createStore";
-
-function* idSequence() {
-  let index = 1;
-
-  while (true) {
-    yield index++;
-  }
-}
-
-const generateId = idSequence();
+import { generateId } from "../utils/generateId";
 
 export enum Toast {
   Success = "Success",
+  Info = "Info",
   Error = "Error",
 }
 export interface IToast {
