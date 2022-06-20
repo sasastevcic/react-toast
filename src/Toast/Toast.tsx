@@ -9,10 +9,11 @@ export const Toast = (): ReactElement => {
   return (
     <Portal portalId="toast">
       <StyledToast>
-        {toasts.map(({ id, type }) => (
-          <StyledToastItem key={id}>
-            <StyledClose onClick={() => remove(id)}>X</StyledClose>
-            Toast {type}
+        {toasts.map(({ id, type, title, description, isPersistent }) => (
+          <StyledToastItem key={id} $type={type}>
+            {!isPersistent && <StyledClose onClick={() => remove(id)}>X</StyledClose>}
+            <h4>{title}</h4>
+            {description && <p>{description}</p>}
           </StyledToastItem>
         ))}
       </StyledToast>

@@ -7,16 +7,23 @@ export enum Toast {
   Info = "Info",
   Error = "Error",
 }
-export interface IToast {
+
+interface IToastConfig {
+  title?: string;
+  description?: string;
+  isPersistent?: boolean;
+}
+export interface IToast extends IToastConfig {
   type: Toast;
   id: number;
 }
 
 type ToastStore = {
   toasts: Array<IToast>;
-  dispatch: (type: Toast) => void;
+  dispatch: (type: Toast, config?: IToastConfig) => void;
   remove: (id: number) => void;
 };
+
 
 export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>(
   "ToastStore",
@@ -24,21 +31,24 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>(
     const [toasts, setToasts] = useState<Array<IToast>>([]);
     const timeoutRef = useRef<NodeJS.Timeout>();
 
-    const dispatch = useCallback((type: Toast) => {
+    const dispatch = useCallback((type: Toast, { title, description, isPersistent }: IToastConfig = {}) => {
+      const id = generateId.next().value as number;
+
       const generateToast: IToast = {
-        id: generateId.next().value as number,
+        title: title ?? type,
+        id,
         type,
+        description,
+        isPersistent,
       };
 
       setToasts((state) => [...state, generateToast]);
 
-      timeoutRef.current = setTimeout(() => {
-        setToasts((state) => {
-          const [, ...rest] = state;
-
-          return rest;
-        });
-      }, 10000);
+      if (!isPersistent) {
+        timeoutRef.current = setTimeout(() => {
+          setToasts((state) => state.filter(({ id: _id }) => _id !== id));
+        }, 10000);
+      }
     }, []);
 
     const remove = useCallback((id: number) => {

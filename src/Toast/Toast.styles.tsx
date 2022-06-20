@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { rgba } from 'polished';
+import { Toast } from "../hooks/useToast";
 
 export const StyledToast = styled.div`
   display: flex;
@@ -8,13 +10,36 @@ export const StyledToast = styled.div`
   right: 5rem;
 `;
 
-export const StyledToastItem = styled.div`
-  height: 4rem;
-  width: 10rem;
+const colorLookup: Record<Toast, { color: string; backgroundColor: string }> = {
+  [Toast.Success]: {
+    color: 'white',
+    backgroundColor: 'green',
+  },
+  [Toast.Info]: {
+    color: 'black',
+    backgroundColor: 'yellow',
+  },
+  [Toast.Error]: {
+    color: 'white',
+    backgroundColor: 'red',
+  },
+}
+
+export const StyledToastItem = styled.div<{ $type: Toast }>`
+  font-size: 1.6rem;
+  min-height: 6rem;
+  width: 20rem;
   padding: 1rem 2rem;
-  margin-top: 1rem;
-  background-color: red;
   position: relative;
+  border-radius: 1rem;
+  backdrop-filter: blur(0.5rem);
+
+  &:not(:first-child) {
+    margin-top: 1rem;
+  }
+
+  background-color: ${({ $type }) => rgba(colorLookup[$type].backgroundColor, 0.6)};
+  color: ${({ $type }) => colorLookup[$type].color};
 `;
 
 export const StyledClose = styled.button`

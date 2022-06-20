@@ -1,6 +1,9 @@
 .App {
+  height: 200vh;
   padding: 100px;
   text-align: center;
+  background-size: cover;
+  background-position: center center;
 }
 
 html {
@@ -10,6 +13,7 @@ html {
 }
 
 body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   text-rendering: optimizeSpeed;
   margin: 0;
   padding: 0;

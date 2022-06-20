@@ -6,14 +6,14 @@ function App() {
   const { dispatch } = useToastStore();
 
   return (
-    <div className="App">
-      <StyledToastButton type="button" onClick={() => dispatch(Toast.Success)} $buttonTheme={Toast.Success}>
+    <div className="App" style={{ backgroundImage: 'url("/background.jpg")'}}>
+      <StyledToastButton type="button" onClick={() => dispatch(Toast.Success, { title: 'Some random title' })} $buttonTheme={Toast.Success}>
         Success
       </StyledToastButton>
-      <StyledToastButton type="button" onClick={() => dispatch(Toast.Info)} $buttonTheme={Toast.Info}>
+      <StyledToastButton type="button" onClick={() => dispatch(Toast.Info, { description: 'Some description' })} $buttonTheme={Toast.Info}>
         Info
       </StyledToastButton>
-      <StyledToastButton type="button" onClick={() => dispatch(Toast.Error)} $buttonTheme={Toast.Error}>
+      <StyledToastButton type="button" onClick={() => dispatch(Toast.Error, { isPersistent: true })} $buttonTheme={Toast.Error}>
         Error
       </StyledToastButton>
     </div>
