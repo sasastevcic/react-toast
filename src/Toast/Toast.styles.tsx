@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { rgba } from 'polished';
+import { rgba, size } from 'polished';
 import { Toast } from '../hooks/useToast';
 
 export const StyledToast = styled.div`
@@ -26,10 +26,9 @@ const colorLookup: Record<Toast, { color: string; backgroundColor: string }> = {
 };
 
 export const StyledToastItem = styled.div<{ $type: Toast }>`
-	font-size: 1.6rem;
 	min-height: 6rem;
 	width: 20rem;
-	padding: 1rem 2rem;
+	padding: 1.5rem 2rem;
 	position: relative;
 	border-radius: 1rem;
 	backdrop-filter: blur(0.5rem);
@@ -42,11 +41,52 @@ export const StyledToastItem = styled.div<{ $type: Toast }>`
 	color: ${({ $type }) => colorLookup[$type].color};
 `;
 
+export const StyledTitle = styled.h5`
+	font-size: 1.4rem;
+	padding-right: 2rem;
+	margin-bottom: 0.5rem;
+`;
+
+export const StyledDescription = styled.p`
+	font-size: 1.2rem;
+	margin-bottom: 1rem;
+`;
+
 export const StyledClose = styled.button`
+	${size('2rem')};
+	color: inherit;
 	position: absolute;
 	top: 1rem;
 	right: 1rem;
-	background-color: transparent;
-	padding: 0;
-	border: 0;
+	border-radius: 50%;
+	border: 1px solid currentColor;
+
+	&::before,
+	&::after {
+		content: '';
+		color: inherit;
+		background-color: currentColor;
+		position: absolute;
+		height: 1px;
+		width: calc(100% - 0.8rem);
+		left: 50%;
+		top: 50%;
+	}
+
+	&::before {
+		transform: translate(-50%, -50%) rotate(45deg);
+	}
+
+	&::after {
+		transform: translate(-50%, -50%) rotate(-45deg);
+	}
+`;
+
+export const StyledCta = styled.button`
+	color: inherit;
+	font-size: 1.2rem;
+	padding: 0.5rem 1rem;
+	border-radius: 2.5rem;
+	border: 1px solid currentColor;
+	margin-top: 1rem;
 `;
