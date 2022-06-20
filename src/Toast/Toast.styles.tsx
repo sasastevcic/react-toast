@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { rgba, size } from 'polished';
 import { Toast } from '../hooks/useToast';
+import { motion } from 'framer-motion';
 
 export const StyledToast = styled.div`
 	display: flex;
@@ -25,20 +26,25 @@ const colorLookup: Record<Toast, { color: string; backgroundColor: string }> = {
 	},
 };
 
-export const StyledToastItem = styled.div<{ $type: Toast }>`
-	min-height: 6rem;
+export const StyledToastHolder = styled(motion.div)`
+	&:not(:first-child) {
+		margin-top: 1rem;
+	}
+`;
+
+export const StyledToastItem = styled(motion.div)<{ $type: Toast }>`
 	width: 20rem;
-	padding: 1.5rem 2rem;
 	position: relative;
 	border-radius: 1rem;
 	backdrop-filter: blur(0.5rem);
 
-	&:not(:first-child) {
-		margin-top: 1rem;
-	}
-
 	background-color: ${({ $type }) => rgba(colorLookup[$type].backgroundColor, 0.6)};
 	color: ${({ $type }) => colorLookup[$type].color};
+`;
+
+export const StyledToastContent = styled.div`
+	min-height: 6rem;
+	padding: 1.5rem 2rem;
 `;
 
 export const StyledTitle = styled.h5`

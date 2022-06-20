@@ -27,7 +27,7 @@ function App() {
 				onClick={() =>
 					dispatch(Toast.Info, {
 						description: 'Some description',
-						cta: 'click me',
+						cta: 'Click me',
 						onCtaClick: (id) => {
 							console.log('Clicked Info with an id: ' + id);
 						},
