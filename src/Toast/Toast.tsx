@@ -29,6 +29,9 @@ const variants: Record<'parent' | 'child', Variants> = {
 			height: 0,
 			marginTop: 0,
 			transition: {
+				marginTop: {
+					delay: 0.3,
+				},
 				height: {
 					delay: 0.3,
 				},
