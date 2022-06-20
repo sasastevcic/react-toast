@@ -28,7 +28,7 @@ type ToastStore = {
 
 export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('ToastStore', () => {
 	const [toasts, setToasts] = useState<Array<IToast>>([]);
-	const timeoutRef = useRef<NodeJS.Timeout>();
+	const timeoutRef = useRef<Record<number, NodeJS.Timeout>>();
 
 	const dispatch = useCallback(
 		(type: Toast, { title, description, cta, isPersistent, onCtaClick }: IToastConfig = {}) => {
@@ -47,21 +47,31 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 			setToasts((state) => [...state, generateToast]);
 
 			if (!isPersistent) {
-				timeoutRef.current = setTimeout(() => {
+				const timeout = setTimeout(() => {
 					setToasts((state) => state.filter(({ id: _id }) => _id !== id));
 				}, 10000);
+
+				timeoutRef.current = {
+					...timeoutRef.current,
+					[id]: timeout,
+				};
 			}
 		},
 		[],
 	);
 
 	const remove = useCallback((id: number) => {
+		const currentTimeout = timeoutRef.current?.[id];
+		clearTimeout(currentTimeout);
+
 		setToasts((state) => state.filter(({ id: _id }) => _id !== id));
 	}, []);
 
 	useEffect(() => {
 		return () => {
-			clearTimeout(timeoutRef.current);
+			Object.values(timeoutRef.current ?? {}).forEach((timeout) => {
+				clearTimeout(timeout);
+			});
 		};
 	}, []);
 
