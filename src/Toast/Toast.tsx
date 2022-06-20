@@ -8,7 +8,7 @@ export const Toast = (): ReactElement => {
 
   return (
     <Portal portalId="toast">
-      <StyledToast data-testid="Toast">
+      <StyledToast>
         {toasts.map(({ id, type }) => (
           <StyledToastItem key={id}>
             <StyledClose onClick={() => remove(id)}>X</StyledClose>

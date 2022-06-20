@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createStore } from "../utils/createStore";
-import { v4 as uuidv4 } from "uuid";
+
+function* idSequence() {
+  let i = 0;
+
+  while (true) {
+    yield i++;
+  }
+}
+
+const generateId = idSequence();
 
 export enum Toast {
   Success = "Success",
@@ -8,13 +17,13 @@ export enum Toast {
 }
 export interface IToast {
   type: Toast;
-  id: ReturnType<typeof uuidv4>;
+  id: number;
 }
 
 type ToastStore = {
   toasts: Array<IToast>;
   dispatch: (type: Toast) => void;
-  remove: (id: string) => void;
+  remove: (id: number) => void;
 };
 
 export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>(
@@ -25,7 +34,7 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>(
 
     const dispatch = useCallback((type: Toast) => {
       const generateToast: IToast = {
-        id: uuidv4(),
+        id: generateId.next().value as number,
         type,
       };
 
@@ -40,7 +49,7 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>(
       }, 10000);
     }, []);
 
-    const remove = useCallback((id: string) => {
+    const remove = useCallback((id: number) => {
       setToasts((state) => state.filter(({ id: _id }) => _id !== id));
     }, []);
 
