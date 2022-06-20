@@ -17,13 +17,22 @@ const variants: Record<'parent' | 'child', Variants> = {
 	parent: {
 		initial: {
 			height: 0,
+			marginTop: 0,
 		},
 		animate: {
 			height: 'auto',
+			marginTop: 10,
 		},
 		exit: {
 			opacity: 0,
 			scale: 0.9,
+			height: 0,
+			marginTop: 0,
+			transition: {
+				height: {
+					delay: 0.3,
+				},
+			},
 		},
 	},
 	child: {

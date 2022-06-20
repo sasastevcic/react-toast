@@ -26,11 +26,7 @@ const colorLookup: Record<Toast, { color: string; backgroundColor: string }> = {
 	},
 };
 
-export const StyledToastHolder = styled(motion.div)`
-	&:not(:first-child) {
-		margin-top: 1rem;
-	}
-`;
+export const StyledToastHolder = styled(motion.div)``;
 
 export const StyledToastItem = styled(motion.div)<{ $type: Toast }>`
 	width: 20rem;
