@@ -40,6 +40,11 @@ export const StyledToastItem = styled(motion.div)<{ $type: Toast }>`
 
 	background-color: ${({ $type }) => rgba(colorLookup[$type].backgroundColor, 0.6)};
 	color: ${({ $type }) => colorLookup[$type].color};
+	transition: background-color 0.2s ease-in-out;
+
+	&:hover {
+		background-color: ${({ $type }) => rgba(colorLookup[$type].backgroundColor, 1)};
+	}
 `;
 
 export const StyledToastContent = styled.div`
