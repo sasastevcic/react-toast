@@ -17,6 +17,10 @@ const colorLookup: Record<Toast, { color: string; backgroundColor: string }> = {
 		backgroundColor: 'green',
 	},
 	[Toast.Info]: {
+		color: 'white',
+		backgroundColor: 'blue',
+	},
+	[Toast.Warning]: {
 		color: 'black',
 		backgroundColor: 'yellow',
 	},

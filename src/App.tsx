@@ -39,7 +39,23 @@ function App() {
 			</StyledToastButton>
 			<StyledToastButton
 				type="button"
-				onClick={() => dispatch(Toast.Error, { isPersistent: true })}
+				onClick={() =>
+					dispatch(Toast.Warning, {
+						description: 'Persistent warning',
+						isPersistent: true,
+					})
+				}
+				$buttonTheme={Toast.Warning}
+			>
+				Warning
+			</StyledToastButton>
+			<StyledToastButton
+				type="button"
+				onClick={() =>
+					dispatch(Toast.Error, {
+						description: 'Error message',
+					})
+				}
 				$buttonTheme={Toast.Error}
 			>
 				Error

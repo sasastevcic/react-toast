@@ -5,6 +5,7 @@ import { generateId } from '../utils/generateId';
 export enum Toast {
 	Success = 'Success',
 	Info = 'Info',
+	Warning = 'Warning',
 	Error = 'Error',
 }
 
