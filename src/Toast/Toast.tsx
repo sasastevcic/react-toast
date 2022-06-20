@@ -37,7 +37,7 @@ const variants: Record<'parent' | 'child', Variants> = {
 };
 
 export const Toast = (): ReactElement => {
-	const { toasts, remove } = useToastStore();
+	const { toasts, handleRemove, handleMouseEnter, handleMouseLeave } = useToastStore();
 
 	return (
 		<Portal portalId="toast">
@@ -50,6 +50,10 @@ export const Toast = (): ReactElement => {
 							animate="animate"
 							initial="initial"
 							exit="exit"
+							{...(!isPersistent && {
+								onMouseEnter: () => handleMouseEnter(id),
+								onMouseLeave: () => handleMouseLeave(id),
+							})}
 						>
 							<StyledToastItem
 								$type={type}
@@ -58,7 +62,7 @@ export const Toast = (): ReactElement => {
 								initial="initial"
 							>
 								{!isPersistent && (
-									<StyledClose onClick={() => remove(id)} aria-label="Close notification" />
+									<StyledClose onClick={() => handleRemove(id)} aria-label="Close notification" />
 								)}
 								<StyledToastContent>
 									<StyledTitle>{title}</StyledTitle>

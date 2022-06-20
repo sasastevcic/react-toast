@@ -23,12 +23,57 @@ export interface IToast extends IToastConfig {
 type ToastStore = {
 	toasts: Array<IToast>;
 	dispatch: (type: Toast, config?: IToastConfig) => void;
-	remove: (id: number) => void;
+	handleRemove: (id: number) => void;
+	handleMouseEnter: (id: number) => void;
+	handleMouseLeave: (id: number) => void;
 };
+
+const DELAY = 5_000;
 
 export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('ToastStore', () => {
 	const [toasts, setToasts] = useState<Array<IToast>>([]);
 	const timeoutRef = useRef<Record<number, NodeJS.Timeout>>();
+
+	const removeById = useCallback(
+		(id: number) => setToasts((state) => state.filter(({ id: _id }) => _id !== id)),
+		[],
+	);
+
+	const handleTimeout = useCallback(
+		(id: number) => {
+			const timeout = setTimeout(() => {
+				removeById(id);
+			}, DELAY);
+
+			timeoutRef.current = {
+				...timeoutRef.current,
+				[id]: timeout,
+			};
+		},
+		[removeById],
+	);
+
+	const handleRemove = useCallback(
+		(id: number) => {
+			const currentTimeout = timeoutRef.current?.[id];
+			clearTimeout(currentTimeout);
+
+			removeById(id);
+		},
+		[removeById],
+	);
+
+	const handleMouseEnter = useCallback((id: number) => {
+		const currentTimeout = timeoutRef.current?.[id];
+		clearTimeout(currentTimeout);
+	}, []);
+
+	const handleMouseLeave = useCallback(
+		(id: number) => {
+			handleTimeout(id);
+		},
+		[handleTimeout],
+	);
 
 	const dispatch = useCallback(
 		(type: Toast, { title, description, cta, isPersistent, onCtaClick }: IToastConfig = {}) => {
@@ -47,25 +92,11 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 			setToasts((state) => [...state, generateToast]);
 
 			if (!isPersistent) {
-				const timeout = setTimeout(() => {
-					setToasts((state) => state.filter(({ id: _id }) => _id !== id));
-				}, 10000);
-
-				timeoutRef.current = {
-					...timeoutRef.current,
-					[id]: timeout,
-				};
+				handleTimeout(id);
 			}
 		},
-		[],
+		[handleTimeout],
 	);
-
-	const remove = useCallback((id: number) => {
-		const currentTimeout = timeoutRef.current?.[id];
-		clearTimeout(currentTimeout);
-
-		setToasts((state) => state.filter(({ id: _id }) => _id !== id));
-	}, []);
 
 	useEffect(() => {
 		return () => {
@@ -78,6 +109,8 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 	return {
 		toasts,
 		dispatch,
-		remove,
+		handleRemove,
+		handleMouseEnter,
+		handleMouseLeave,
 	};
 });
