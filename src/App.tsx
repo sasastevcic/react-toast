@@ -1,4 +1,5 @@
 import "./App.css";
+import { StyledToastButton } from "./App.styles";
 import { Toast, useToastStore } from "./hooks/useToast";
 
 function App() {
@@ -6,12 +7,15 @@ function App() {
 
   return (
     <div className="App">
-      <button type="button" onClick={() => dispatch(Toast.Success)}>
+      <StyledToastButton type="button" onClick={() => dispatch(Toast.Success)} $buttonTheme={Toast.Success}>
         Success
-      </button>
-      <button type="button" onClick={() => dispatch(Toast.Error)}>
+      </StyledToastButton>
+      <StyledToastButton type="button" onClick={() => dispatch(Toast.Info)} $buttonTheme={Toast.Info}>
+        Info
+      </StyledToastButton>
+      <StyledToastButton type="button" onClick={() => dispatch(Toast.Error)} $buttonTheme={Toast.Error}>
         Error
-      </button>
+      </StyledToastButton>
     </div>
   );
 }
