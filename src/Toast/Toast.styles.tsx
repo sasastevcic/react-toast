@@ -3,6 +3,29 @@ import { rgba, size } from 'polished';
 import { Toast } from '../hooks/useToast';
 import { motion } from 'framer-motion';
 
+interface TypeProps {
+	$type: Toast;
+}
+
+const colorLookup: Record<Toast, { primary: string; secondary: string }> = {
+	[Toast.Success]: {
+		primary: 'green',
+		secondary: 'white',
+	},
+	[Toast.Info]: {
+		primary: 'blue',
+		secondary: 'white',
+	},
+	[Toast.Warning]: {
+		primary: 'yellow',
+		secondary: 'black',
+	},
+	[Toast.Error]: {
+		primary: 'red',
+		secondary: 'white',
+	},
+};
+
 export const StyledToast = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -11,39 +34,20 @@ export const StyledToast = styled.div`
 	right: 5rem;
 `;
 
-const colorLookup: Record<Toast, { color: string; backgroundColor: string }> = {
-	[Toast.Success]: {
-		color: 'white',
-		backgroundColor: 'green',
-	},
-	[Toast.Info]: {
-		color: 'white',
-		backgroundColor: 'blue',
-	},
-	[Toast.Warning]: {
-		color: 'black',
-		backgroundColor: 'yellow',
-	},
-	[Toast.Error]: {
-		color: 'white',
-		backgroundColor: 'red',
-	},
-};
-
 export const StyledToastHolder = styled(motion.div)``;
 
-export const StyledToastItem = styled(motion.div)<{ $type: Toast }>`
+export const StyledToastItem = styled(motion.div)<TypeProps>`
 	width: 20rem;
 	position: relative;
 	border-radius: 1rem;
 	backdrop-filter: blur(0.5rem);
 
-	background-color: ${({ $type }) => rgba(colorLookup[$type].backgroundColor, 0.6)};
-	color: ${({ $type }) => colorLookup[$type].color};
+	background-color: ${({ $type }) => rgba(colorLookup[$type].primary, 0.6)};
+	color: ${({ $type }) => colorLookup[$type].secondary};
 	transition: background-color 0.2s ease-in-out;
 
 	&:hover {
-		background-color: ${({ $type }) => rgba(colorLookup[$type].backgroundColor, 1)};
+		background-color: ${({ $type }) => rgba(colorLookup[$type].primary, 1)};
 	}
 `;
 
@@ -63,7 +67,7 @@ export const StyledDescription = styled.p`
 	margin-bottom: 1rem;
 `;
 
-export const StyledClose = styled.button`
+export const StyledClose = styled.button<TypeProps>`
 	${size('2rem')};
 	color: inherit;
 	position: absolute;
@@ -71,6 +75,7 @@ export const StyledClose = styled.button`
 	right: 1rem;
 	border-radius: 50%;
 	border: 1px solid currentColor;
+	transition: background-color 0.2s ease-in-out;
 
 	&::before,
 	&::after {
@@ -82,6 +87,7 @@ export const StyledClose = styled.button`
 		width: calc(100% - 0.8rem);
 		left: 50%;
 		top: 50%;
+		transition: background-color 0.2s ease-in-out;
 	}
 
 	&::before {
@@ -91,13 +97,30 @@ export const StyledClose = styled.button`
 	&::after {
 		transform: translate(-50%, -50%) rotate(-45deg);
 	}
+
+	&:hover {
+		background-color: currentColor;
+
+		&::before,
+		&::after {
+			background-color: ${({ $type }) => colorLookup[$type].primary};
+		}
+	}
 `;
 
-export const StyledCta = styled.button`
+export const StyledCta = styled.button<TypeProps>`
 	color: inherit;
 	font-size: 1.2rem;
 	padding: 0.5rem 1rem;
 	border-radius: 2.5rem;
 	border: 1px solid currentColor;
 	margin-top: 1rem;
+	transition: 0.2s ease-in-out;
+	transition-property: color, border-color, background-color;
+
+	&:hover {
+		color: ${({ $type }) => colorLookup[$type].primary};
+		border-color: ${({ $type }) => colorLookup[$type].secondary};
+		background-color: ${({ $type }) => colorLookup[$type].secondary};
+	}
 `;

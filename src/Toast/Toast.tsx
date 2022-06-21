@@ -74,13 +74,18 @@ export const Toast = (): ReactElement => {
 								initial="initial"
 							>
 								{!isPersistent && (
-									<StyledClose onClick={() => handleRemove(id)} aria-label="Close notification" />
+									<StyledClose
+										type="button"
+										$type={type}
+										onClick={() => handleRemove(id)}
+										aria-label="Close notification"
+									/>
 								)}
 								<StyledToastContent>
 									<StyledTitle>{title}</StyledTitle>
 									{description && <StyledDescription>{description}</StyledDescription>}
 									{cta && onCtaClick && (
-										<StyledCta type="button" onClick={() => onCtaClick(id)}>
+										<StyledCta type="button" $type={type} onClick={() => onCtaClick(id)}>
 											{cta}
 										</StyledCta>
 									)}

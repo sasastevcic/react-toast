@@ -79,7 +79,7 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 
 			if (!isPersistent) {
 				const timeout = new Timer(() => {
-					removeById(id);
+					// removeById(id);
 				}, DELAY);
 
 				timeoutRef.current = {
