@@ -17,6 +17,7 @@ interface IToastConfig {
 	cta?: string;
 	onCtaClick?: (id: number) => void;
 }
+
 export interface IToast extends IToastConfig {
 	type: Toast;
 	id: number;
@@ -92,7 +93,25 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 	);
 
 	useEffect(() => {
+		const pauseAll = () => {
+			Object.values(timerRef.current ?? {}).forEach((timer) => {
+				timer.pause();
+			});
+		};
+
+		const resumeAll = () => {
+			Object.values(timerRef.current ?? {}).forEach((timer) => {
+				timer.resume();
+			});
+		};
+
+		window.addEventListener('blur', pauseAll);
+		window.addEventListener('focus', resumeAll);
+
 		return () => {
+			window.removeEventListener('blur', pauseAll);
+			window.removeEventListener('focus', resumeAll);
+
 			Object.values(timerRef.current ?? {}).forEach((timer) => {
 				timer.clearTimeout();
 			});
