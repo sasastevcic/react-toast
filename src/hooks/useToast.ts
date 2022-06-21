@@ -34,7 +34,7 @@ const DELAY = 5_000;
 
 export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('ToastStore', () => {
 	const [toasts, setToasts] = useState<Array<IToast>>([]);
-	const timeoutRef = useRef<Record<number, Timer>>();
+	const timerRef = useRef<Record<number, Timer>>();
 
 	const removeById = useCallback(
 		(id: number) => setToasts((state) => state.filter(({ id: _id }) => _id !== id)),
@@ -43,8 +43,8 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 
 	const handleRemove = useCallback(
 		(id: number) => {
-			const currentTimeout = timeoutRef.current?.[id];
-			currentTimeout?.clearTimeout();
+			const currentTimer = timerRef.current?.[id];
+			currentTimer?.clearTimeout();
 
 			removeById(id);
 		},
@@ -52,13 +52,13 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 	);
 
 	const handleMouseEnter = useCallback((id: number) => {
-		const currentTimeout = timeoutRef.current?.[id];
-		currentTimeout?.pause();
+		const currentTimer = timerRef.current?.[id];
+		currentTimer?.pause();
 	}, []);
 
 	const handleMouseLeave = useCallback((id: number) => {
-		const currentTimeout = timeoutRef.current?.[id];
-		currentTimeout?.resume();
+		const currentTimer = timerRef.current?.[id];
+		currentTimer?.resume();
 	}, []);
 
 	const dispatch = useCallback(
@@ -78,13 +78,13 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 			setToasts((state) => [...state, generateToast]);
 
 			if (!isPersistent) {
-				const timeout = new Timer(() => {
+				const timer = new Timer(() => {
 					removeById(id);
 				}, DELAY);
 
-				timeoutRef.current = {
-					...timeoutRef.current,
-					[id]: timeout,
+				timerRef.current = {
+					...timerRef.current,
+					[id]: timer,
 				};
 			}
 		},
@@ -93,8 +93,8 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 
 	useEffect(() => {
 		return () => {
-			Object.values(timeoutRef.current ?? {}).forEach((timeout) => {
-				timeout.clearTimeout();
+			Object.values(timerRef.current ?? {}).forEach((timer) => {
+				timer.clearTimeout();
 			});
 		};
 	}, []);
