@@ -1,3 +1,4 @@
+import { PanInfo } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createStore } from '../utils/createStore';
 import { generateId } from '../utils/generateId';
@@ -29,7 +30,10 @@ type ToastStore = {
 	handleRemove: (id: number) => void;
 	handleMouseEnter: (id: number) => void;
 	handleMouseLeave: (id: number) => void;
+	handleDragEnd: (id: number, panInfo: PanInfo) => void;
 };
+
+const getSwipeLength = (offset: number, absDistance: number) => (offset / absDistance) * 100;
 
 const DELAY = 5_000;
 
@@ -61,6 +65,20 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 		const currentTimer = timerRef.current?.[id];
 		currentTimer?.resume();
 	}, []);
+
+	const handleDragEnd = useCallback(
+		(id: number, { offset, velocity }: PanInfo) => {
+			const length = Math.round(getSwipeLength(offset.x, 200));
+			const velocityX = velocity.x;
+
+			const isSwipedEnough = length > 60 || velocityX > 100;
+
+			if (isSwipedEnough) {
+				removeById(id);
+			}
+		},
+		[removeById],
+	);
 
 	const dispatch = useCallback(
 		(type: Toast, { title, description, cta, isPersistent, onCtaClick }: IToastConfig = {}) => {
@@ -124,5 +142,6 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 		handleRemove,
 		handleMouseEnter,
 		handleMouseLeave,
+		handleDragEnd,
 	};
 });

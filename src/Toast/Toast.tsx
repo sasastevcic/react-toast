@@ -49,7 +49,8 @@ const variants: Record<'parent' | 'child', Variants> = {
 };
 
 export const Toast = (): ReactElement => {
-	const { toasts, handleRemove, handleMouseEnter, handleMouseLeave } = useToastStore();
+	const { toasts, handleRemove, handleMouseEnter, handleMouseLeave, handleDragEnd } =
+		useToastStore();
 
 	return (
 		<Portal portalId="toast">
@@ -62,7 +63,10 @@ export const Toast = (): ReactElement => {
 							animate="animate"
 							initial="initial"
 							exit="exit"
+							dragConstraints={{ left: 0, right: 0 }}
 							{...(!isPersistent && {
+								drag: 'x',
+								onDragEnd: (_event, panInfo) => handleDragEnd(id, panInfo),
 								onMouseEnter: () => handleMouseEnter(id),
 								onMouseLeave: () => handleMouseLeave(id),
 							})}
