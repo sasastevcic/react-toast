@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createStore } from '../utils/createStore';
 import { generateId } from '../utils/generateId';
+import { Timer } from '../utils/timer';
 
 export enum Toast {
 	Success = 'Success',
@@ -33,31 +34,17 @@ const DELAY = 5_000;
 
 export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('ToastStore', () => {
 	const [toasts, setToasts] = useState<Array<IToast>>([]);
-	const timeoutRef = useRef<Record<number, NodeJS.Timeout>>();
+	const timeoutRef = useRef<Record<number, Timer>>();
 
 	const removeById = useCallback(
 		(id: number) => setToasts((state) => state.filter(({ id: _id }) => _id !== id)),
 		[],
 	);
 
-	const handleTimeout = useCallback(
-		(id: number) => {
-			const timeout = setTimeout(() => {
-				removeById(id);
-			}, DELAY);
-
-			timeoutRef.current = {
-				...timeoutRef.current,
-				[id]: timeout,
-			};
-		},
-		[removeById],
-	);
-
 	const handleRemove = useCallback(
 		(id: number) => {
 			const currentTimeout = timeoutRef.current?.[id];
-			clearTimeout(currentTimeout);
+			currentTimeout?.clearTimeout();
 
 			removeById(id);
 		},
@@ -66,15 +53,13 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 
 	const handleMouseEnter = useCallback((id: number) => {
 		const currentTimeout = timeoutRef.current?.[id];
-		clearTimeout(currentTimeout);
+		currentTimeout?.pause();
 	}, []);
 
-	const handleMouseLeave = useCallback(
-		(id: number) => {
-			handleTimeout(id);
-		},
-		[handleTimeout],
-	);
+	const handleMouseLeave = useCallback((id: number) => {
+		const currentTimeout = timeoutRef.current?.[id];
+		currentTimeout?.resume();
+	}, []);
 
 	const dispatch = useCallback(
 		(type: Toast, { title, description, cta, isPersistent, onCtaClick }: IToastConfig = {}) => {
@@ -93,16 +78,23 @@ export const [ToastStoreProvider, useToastStore] = createStore<ToastStore>('Toas
 			setToasts((state) => [...state, generateToast]);
 
 			if (!isPersistent) {
-				handleTimeout(id);
+				const timeout = new Timer(() => {
+					removeById(id);
+				}, DELAY);
+
+				timeoutRef.current = {
+					...timeoutRef.current,
+					[id]: timeout,
+				};
 			}
 		},
-		[handleTimeout],
+		[removeById],
 	);
 
 	useEffect(() => {
 		return () => {
 			Object.values(timeoutRef.current ?? {}).forEach((timeout) => {
-				clearTimeout(timeout);
+				timeout.clearTimeout();
 			});
 		};
 	}, []);
