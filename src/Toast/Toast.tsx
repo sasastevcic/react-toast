@@ -24,8 +24,8 @@ const variants: Record<'parent' | 'child', Variants> = {
 			marginTop: 10,
 		},
 		exit: {
+			x: '100%',
 			opacity: 0,
-			scale: 0.9,
 			height: 0,
 			marginTop: 0,
 			transition: {
